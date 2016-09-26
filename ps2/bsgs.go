@@ -8,7 +8,6 @@ import (
     "strconv"
     "math"
     "math/big"
-    "fmt"
 )
 
 func exp(modulus int, base int, power int) int {
@@ -21,9 +20,9 @@ func exp(modulus int, base int, power int) int {
 }
 
 func in_map_values(pairs map[int]int, value int) int {
-    fmt.Println(value)
+    //fmt.Println(value)
     for k, v := range pairs {
-        fmt.Println(k, v)
+        //fmt.Println(k, v)
         if value == v {
             return k;
         }
@@ -37,7 +36,7 @@ func prime_inv(a int, m int, n int) int {
 
 // a is a primitive root in (Z/b)*
 func bsgs(a int, b int, n int) int {
-    fmt.Println(a, b, n)
+    //fmt.Println(a, b, n)
     m := int(math.Ceil(math.Sqrt(float64(n))))
     // n is prime, so a**(n-2) is the inverse of m
     // assert base > 2
@@ -49,7 +48,7 @@ func bsgs(a int, b int, n int) int {
     }
 
     inv := prime_inv(a, m, n)
-    fmt.Println(a, m, inv)
+    //fmt.Println(a, m, inv)
 
     y := b
 
@@ -86,7 +85,7 @@ func main() {
     }
 
     output := bsgs(g, h, p)
-    fmt.Println(output)
+    //fmt.Println(output)
 
     err = ioutil.WriteFile("output.txt", []byte(strconv.Itoa(output)), 0644)
     if (err != nil) {
