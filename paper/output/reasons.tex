@@ -1,0 +1,163 @@
+\documentclass{article}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{centernot}
+\usepackage{scalerel}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{parskip}
+\usepackage[english]{babel}
+\usepackage{biblatex}
+\addbibresource{citations.bib}
+
+\newcommand\showdiv[1]{\overline{\smash{\hstretch{.5}{)}\mkern-3.2mu\hstretch{.5}{)}}#1}}
+\newcommand\ph[1]{\textcolor{white}{#1}}
+
+\makeatletter
+% we use \prefix@<level> only if it is defined
+\renewcommand{\@seccntformat}[1]{%
+  \ifcsname prefix@#1\endcsname
+    \csname prefix@#1\endcsname
+  \else
+    \csname the#1\endcsname\quad
+  \fi}
+% define \prefix@section
+\newcommand\prefix@section{}
+\newcommand\prefix@subsection{}
+\makeatother
+
+\begin{document}
+
+\title{Concerns on ECC}
+\author{Joshua Dong}
+\date{\today}
+\maketitle
+
+\section{Abstract}
+Assumptions on the hardness of problems such as the discrete logarithm problem
+and integer factorization are challenged by advances in modern crytpograhpy.
+Advances such as quantum cryptography cast significant doubt on the security of
+currently used algorithms such as Diffie–Hellman, ElGamal, and RSA which rely
+on these assumptions of hardness. Growing discussion on elliptic curve
+cryptography is promising, but this paper looks to challenge and qualify the
+merits of elliptic curve cryptography. While many pitfalls exist, there are
+promising ideas in the field of ECC, some of which are introduced at the end of
+the paper.
+ 
+
+\section{Background}
+\subsection{Elliptic Curve Cryptography}
+There are many forms of elliptic curves and many ways to represent them.
+Optimizing the group operations in finite fields over elliptic curves has been
+a major area of research. This section provides a brief review of the topics
+and notations relevant to this paper.
+
+The Weierstrass form of elliptic curves is
+\begin{equation}
+    y^2 = x^3 + ax + b
+\end{equation}
+Where $a$ and $b$ are subject to constraints preventing cusps and
+self-intersections. Every elliptic curve over a finite field may be represented
+as an Edwards curve \cite{tec} of the form 
+\begin{equation}
+    x^2 + y^2 = c^2(1 + x^2y^2)
+\end{equation}
+These Edwards curves not only generalize elliptic curves, but also benefit from
+a unified addition law that is beneficial for computation:
+\begin{equation}
+    (x_1, y_1) + (x_2, y_2) =
+    (\frac{x_1y_2 + y_1x_2}{1 + dx_1x_2y_1y_2}, \frac{y_1y_2 - x_1x_2}{1 - dx_1x_2y_1y_2})
+\end{equation}
+The results of Bernstein, Birkner, Joye, Lange, and Peters deal with variants
+of Edwards curves over non-binary fields that improve efficiency of addition
+and doubling in the group.
+
+One may wonder why elliptic curves of genus 1, and not conics or hyperelliptic
+curves of genus greater than 1 are used in cryptography. The answer lies in a
+balence between computational simplicity, group operation complexity, and
+smoothness properties of the curve used. Conic cryptography, while fast, adds
+no security benefit in terms of hardness in proportion to key size
+\cite{Menezes1992}. Hyperelliptic curves of increasing genus have increasingly
+hard-to-compute group operations, and hyperelliptic curves of genus 1 or 2 have
+the fastest group operations. Additionally, curves of genus greater than or
+equal to 4 have weaknesses in the smoothness of the group elements
+\cite{Costello2012} \cite{Gaudry2000}. Specifically, index calculus becomes
+very effective for higher genus curves (while still effective for elliptic
+curves of low genus with poorly chosen parameters).
+
+
+\subsection{Quantum Cryptography}
+It is well known that integer factorization can be solved in sub-exponential
+time using quantum computing \cite{quant_fac} \cite{shor_fac}. Thus concerns
+have arisen over the use of RSA and similar algorithms which rely on the
+hardness of non-quantum integer factorization. However, other previously
+considered difficult problems such as the discrete logarithm problem also
+become solvable in sub-exponential time as a consequence of quantum computers
+\cite{bern_quant} \cite{shor}.
+
+While Shor's algorithm provides a means for sub-exponential integer
+factorization and discrete logarithms, it also provides a sub-exponential
+solution to the elliptic discrete logarithm problem. This is significant
+because fewer $q$-bits are needed in elliptic curve cryptography than for
+equivalent-hardness problems of integer factorization or the discrete logarithm
+over finite fields. In fact, the bottleneck in reducing the number of $q$-bits
+needed for solving elliptic discrete logarithms is in the use of the extended
+Euclidian algorithm during division, not modular exponentation \cite{proos}.
+Thus, breaking 224-bit elliptic curve cryptography (equivalent to 2048-bit RSA)
+would require less than 1600 qbits. To put this in perspective, private
+companies already had quantum computers with over 1000 $q$-bits \cite{dwave} in
+2015, and 1600 $q$-bit computers are predicted to exist by 2017 \cite{pq}.
+While the future of quantum computing is far from certain, the theoretical
+risks are strong motivator to move to quantum-resistant hardness assumptions.
+
+Fortunately, there are more hard problems in elliptic curve cryptography such
+as problems concerning supersingular isogenies, a topic which will be covered a
+later section of this paper.
+
+\section{Attacks}
+still hard to implement, and a fiasco such as dual ec drbg can only be
+prevented with vigilant inspriation
+brief mention of does dual ec drbg have a place in this paper? (probably not)
+
+\subsection{index calclusu}
+finding a Weil pairing means (no subexp) ecdlp = dlp (subexp)
+
+\subsection{MOV Attack}
+finding a Weil pairing means (no subexp) ecdlp = dlp (subexp)
+
+\subsection{Quantum attacks}
+%ECDHE
+parameter selection, hyperelliptic curves
+
+\subsection{Side channel attacks}
+\subsubsection{Simple Power Analysis}
+[Huseyin Hisil, Kenneth Koon-Ho Wong, Gary Carter, Ed Dawson twisted ed curves revisited]
+2M + 1D unified addition on a 4 core
+
+\subsubsection{Timing attacks}
+[Huseyin Hisil, Kenneth Koon-Ho Wong, Gary Carter, Ed Dawson twisted ed curves revisited]
+
+\subsubsection{FLUSH+RELOAD}
+montgomery cache attack (yarom benger flush reload), 
+window attack (ohh ahh Naomi Benger 1 , Joop van de Pol 2 , Nigel P. Smart 2 , and Yuval Yarom 1)
+
+\section{Promising Ideas}
+SIDH, ed25519 if quantum doesn't work out (it's a lot of bits -- calc [proos zalka])w
+However, if state agencies have access to technologies surpassing the private sector,
+...
+
+\section{Conclusion}
+While ellptic curve crytpograhpy may be a better alternative to DHE or DLP, 
+there are still problems -- mostly with implementation. The requisite knowledge
+in abstract algebra to understand ECC hinders software developers from easily
+accepting the use of ECC. Addtionally, ECDLP offers little protection from 
+large quantum computers. Even in a future without powerful >1000qbit computers,
+must be careful to set proper parameters just as integer factorization relied
+on a good choice of primes. ed25516 may be the best choice in this case. However,
+most ECC ideas have their flaws. SIDH presents a promising direction in the
+development of ECC, but perhaps it is only because major flaws have yet to be revealed.
+
+
+\printbibliography
+
+\end{document}
